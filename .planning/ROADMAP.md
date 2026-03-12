@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + Surface** - Data layer, city generation, gravitational surface computation
 - [x] **Phase 2: Visualization + Algorithms** - 3D/2D rendering, algorithm engine, animation
-- [ ] **Phase 3: Gallery + Comparison** - Side-by-side comparison, stats, batch runs
+- [x] **Phase 3: Gallery + Comparison** - Side-by-side comparison, stats, batch runs
 
 ## Phase Details
 
@@ -63,8 +63,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — Gallery grid layout with algorithm tiles, Run All, and live leaderboard
-- [ ] 03-02-PLAN.md — Synchronized playback across all tiles and batch comparison mode
+- [x] 03-01-PLAN.md — Gallery grid layout with algorithm tiles, Run All, and live leaderboard
+- [x] 03-02-PLAN.md — Synchronized playback across all tiles and batch comparison mode
 
 ## Progress
 
@@ -75,4 +75,4 @@ Phases execute in numeric order: 1 → 2 → 3
 |-------|----------------|--------|-----------|
 | 1. Foundation + Surface | 2/2 | ✓ Complete | 2026-03-12 |
 | 2. Visualization + Algorithms | 3/3 | ✓ Complete | 2026-03-12 |
-| 3. Gallery + Comparison | 0/2 | Not started | - |
+| 3. Gallery + Comparison | 2/2 | ✓ Complete | 2026-03-12 |
