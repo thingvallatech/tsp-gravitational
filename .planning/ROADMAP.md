@@ -60,11 +60,11 @@ Plans:
   3. User can see computation time and optimality gap (% from best) for each algorithm
   4. User can run batch comparison across multiple random city instances and see aggregate statistics (average tour length, win rate, consistency)
   5. All algorithms animate on the same synchronized timeline so the user can compare progress at the same point in execution
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Gallery layout and stats panel
-- [ ] 03-02: Synchronized playback and batch comparison
+- [ ] 03-01-PLAN.md — Gallery grid layout with algorithm tiles, Run All, and live leaderboard
+- [ ] 03-02-PLAN.md — Synchronized playback across all tiles and batch comparison mode
 
 ## Progress
 
