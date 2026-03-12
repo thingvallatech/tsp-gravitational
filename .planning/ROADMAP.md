@@ -43,12 +43,12 @@ Plans:
   3. User can run any of 10+ TSP algorithms and watch the tour build step-by-step with play/pause controls
   4. Each algorithm's tour is drawn in a distinct color so tours are visually distinguishable
   5. Each animation step shows a text narration describing what the algorithm is doing (e.g., "Nearest Neighbor: connecting city 4 to city 7, distance 12.3")
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
-- [ ] 02-01: 3D height field and 2D heatmap rendering
-- [ ] 02-02: Algorithm engine with Web Workers and first algorithms
-- [ ] 02-03: Animation playback and step narration
+- [ ] 02-01-PLAN.md — 3D height field rendering and 2D heatmap with contour overlay
+- [ ] 02-02-PLAN.md — Algorithm engine: types, 10 TSP algorithms, registry, runner, Zustand slice
+- [ ] 02-03-PLAN.md — Animation playback, tour overlays, step narration, and page wiring
 
 ### Phase 3: Gallery + Comparison
 **Goal**: Users can compare all algorithms side-by-side with live stats and run batch comparisons across multiple random instances
