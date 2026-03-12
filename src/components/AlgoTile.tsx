@@ -101,11 +101,23 @@ export default function AlgoTile({ algoId }: AlgoTileProps) {
       />
 
       {result ? (
-        <div className="mt-2 text-xs text-gray-400 space-y-0.5">
-          <div>Tour: <span className="text-white">{result.tourLength.toFixed(4)}</span></div>
-          <div>Time: <span className="text-white">{result.computeTimeMs.toFixed(1)} ms</span></div>
-          <div>Steps: <span className="text-white">{result.steps.length}</span></div>
-        </div>
+        <>
+          {/* Per-algorithm progress bar */}
+          <div className="mt-2 h-1 bg-gray-700 rounded overflow-hidden">
+            <div
+              className="h-full transition-all duration-100"
+              style={{
+                width: `${((step + 1) / result.steps.length) * 100}%`,
+                backgroundColor: color,
+              }}
+            />
+          </div>
+          <div className="mt-1 text-xs text-gray-400 space-y-0.5">
+            <div>Tour: <span className="text-white">{result.tourLength.toFixed(4)}</span></div>
+            <div>Time: <span className="text-white">{result.computeTimeMs.toFixed(1)} ms</span></div>
+            <div>Steps: <span className="text-white">{step + 1}/{result.steps.length}</span></div>
+          </div>
+        </>
       ) : (
         <div className="mt-2 text-xs text-gray-500">Not run</div>
       )}
