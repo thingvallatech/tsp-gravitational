@@ -4,6 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import HeightFieldMesh from './HeightFieldMesh';
 import CityMarkers3D from './CityMarkers3D';
+import TourPath3D from './TourPath3D';
 
 export default function HeightFieldScene() {
   return (
@@ -13,6 +14,7 @@ export default function HeightFieldScene() {
         <directionalLight position={[5, 10, 5]} intensity={0.8} />
         <HeightFieldMesh />
         <CityMarkers3D />
+        <TourPath3D />
         <OrbitControls
           enableDamping
           dampingFactor={0.1}
