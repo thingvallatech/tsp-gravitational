@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Visualize and validate whether a gravitational centerpoint surface can produce competitive TSP tours
-**Current focus:** Phase 3 - Comparison Gallery (in progress)
+**Current focus:** Phase 3 - Comparison Gallery (complete)
 
 ## Current Position
 
 Phase: 3 of 3 (Gallery + Comparison)
-Plan: 1 of 2 in current phase
-Status: In progress
-Last activity: 2026-03-12 — Completed 03-01-PLAN.md
+Plan: 2 of 2 in current phase
+Status: Complete
+Last activity: 2026-03-12 — Completed 03-02-PLAN.md
 
-Progress: [████████░░] 86% (6/7 plans)
+Progress: [██████████] 100% (7/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 3.0 min
-- Total execution time: 18 min
+- Total plans completed: 7
+- Average duration: 2.9 min
+- Total execution time: 20 min
 
 **By Phase:**
 
@@ -29,10 +29,10 @@ Progress: [████████░░] 86% (6/7 plans)
 |-------|-------|-------|----------|
 | 1. Foundation + Surface | 2/2 | 5 min | 2.5 min |
 | 2. Visualization + Algorithms | 3/3 | 11 min | 3.7 min |
-| 3. Gallery + Comparison | 1/2 | 2 min | 2.0 min |
+| 3. Gallery + Comparison | 2/2 | 4 min | 2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 3 min, 5 min, 3 min, 2 min
+- Last 5 plans: 3 min, 5 min, 3 min, 2 min, 2 min
 - Trend: stable/improving
 
 *Updated after each plan completion*
@@ -65,17 +65,20 @@ Recent decisions affecting current work:
 - Self-contained canvas in AlgoTile rather than reusing TourOverlay2D for simpler props
 - setTimeout(fn, 0) batching for sequential algorithm runs without UI freeze
 - Playback set to final step on Run All so completed tours display immediately
+- Shared tick count normalized to 0-1 fraction for synchronized gallery playback
+- Batch comparison imports generators directly instead of mutating store
+- Sequential seeds (1..N) for reproducible batch comparison runs
 
 ### Pending Todos
 
-None yet.
+None.
 
 ### Blockers/Concerns
 
-None yet.
+None.
 
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 03-01-PLAN.md (gallery comparison with Run All, AlgoTiles, and Leaderboard)
+Stopped at: Completed 03-02-PLAN.md (sync playback + batch comparison) -- all plans complete
 Resume file: None
