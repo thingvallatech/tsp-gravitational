@@ -64,15 +64,15 @@
 | VIZ-05 | Phase 2 | Pending |
 | ALGO-01 | Phase 2 | Pending |
 | ALGO-02 | Phase 2 | Pending |
-| ALGO-03 | Phase 1 | Pending |
+| ALGO-03 | Phase 1 | Complete |
 | ALGO-04 | Phase 3 | Pending |
 | COMP-01 | Phase 3 | Pending |
 | COMP-02 | Phase 3 | Pending |
 | COMP-03 | Phase 3 | Pending |
 | COMP-04 | Phase 3 | Pending |
 | COMP-05 | Phase 3 | Pending |
-| INPT-01 | Phase 1 | Pending |
-| INPT-02 | Phase 1 | Pending |
+| INPT-01 | Phase 1 | Complete |
+| INPT-02 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 16 total
@@ -81,4 +81,4 @@
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after roadmap creation*
+*Last updated: 2026-03-12 after Phase 1 completion*

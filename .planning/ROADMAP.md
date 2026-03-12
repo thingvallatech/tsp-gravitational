@@ -12,7 +12,7 @@ This roadmap delivers a client-side TSP visualization tool in three phases: firs
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Foundation + Surface** - Data layer, city generation, gravitational surface computation
+- [x] **Phase 1: Foundation + Surface** - Data layer, city generation, gravitational surface computation
 - [ ] **Phase 2: Visualization + Algorithms** - 3D/2D rendering, algorithm engine, animation
 - [ ] **Phase 3: Gallery + Comparison** - Side-by-side comparison, stats, batch runs
 
@@ -30,8 +30,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffolding, core types, PRNG, and math utilities
-- [ ] 01-02-PLAN.md — City preset generators, surface computation, and Zustand store
+- [x] 01-01-PLAN.md — Project scaffolding, core types, PRNG, and math utilities
+- [x] 01-02-PLAN.md — City preset generators, surface computation, and Zustand store
 
 ### Phase 2: Visualization + Algorithms
 **Goal**: Users can see the gravitational surface in 3D and 2D, run TSP algorithms including the novel gravitational heuristic, and watch animated step-by-step tour construction
@@ -73,6 +73,6 @@ Phases execute in numeric order: 1 → 2 → 3
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation + Surface | 0/2 | Not started | - |
+| 1. Foundation + Surface | 2/2 | ✓ Complete | 2026-03-12 |
 | 2. Visualization + Algorithms | 0/3 | Not started | - |
 | 3. Gallery + Comparison | 0/2 | Not started | - |

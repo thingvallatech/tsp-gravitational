@@ -5,7 +5,7 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Visualize and validate whether a gravitational centerpoint surface can produce competitive TSP tours
-**Current focus:** Phase 1 - Foundation + Surface (COMPLETE)
+**Current focus:** Phase 2 - Visualization + Algorithms
 
 ## Current Position
 
