@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-03-12)
 
 **Core value:** Visualize and validate whether a gravitational centerpoint surface can produce competitive TSP tours
-**Current focus:** Phase 3 - Comparison Gallery (Phase 2 complete)
+**Current focus:** Phase 3 - Comparison Gallery (in progress)
 
 ## Current Position
 
-Phase: 2 of 3 (Visualization + Algorithms) -- COMPLETE
-Plan: 3 of 3 in current phase
-Status: Phase complete
-Last activity: 2026-03-12 — Completed 02-03-PLAN.md
+Phase: 3 of 3 (Gallery + Comparison)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-03-12 — Completed 03-01-PLAN.md
 
-Progress: [███████░░░] 71% (5/7 plans)
+Progress: [████████░░] 86% (6/7 plans)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: 3.2 min
-- Total execution time: 16 min
+- Total plans completed: 6
+- Average duration: 3.0 min
+- Total execution time: 18 min
 
 **By Phase:**
 
@@ -29,10 +29,11 @@ Progress: [███████░░░] 71% (5/7 plans)
 |-------|-------|-------|----------|
 | 1. Foundation + Surface | 2/2 | 5 min | 2.5 min |
 | 2. Visualization + Algorithms | 3/3 | 11 min | 3.7 min |
+| 3. Gallery + Comparison | 1/2 | 2 min | 2.0 min |
 
 **Recent Trend:**
-- Last 5 plans: 2 min, 3 min, 5 min, 3 min
-- Trend: stable
+- Last 5 plans: 3 min, 5 min, 3 min, 2 min
+- Trend: stable/improving
 
 *Updated after each plan completion*
 
@@ -61,6 +62,9 @@ Recent decisions affecting current work:
 - selectedAlgoId in Zustand store for cross-component state sharing (not prop drilling)
 - primitive object wrapper for Three.js Line to avoid JSX line/SVG conflict in R3F
 - Delta-time accumulation in usePlayback for frame-rate-independent animation speed
+- Self-contained canvas in AlgoTile rather than reusing TourOverlay2D for simpler props
+- setTimeout(fn, 0) batching for sequential algorithm runs without UI freeze
+- Playback set to final step on Run All so completed tours display immediately
 
 ### Pending Todos
 
@@ -73,5 +77,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-12
-Stopped at: Completed 02-03-PLAN.md (algorithm-to-visualization pipeline with animated playback)
+Stopped at: Completed 03-01-PLAN.md (gallery comparison with Run All, AlgoTiles, and Leaderboard)
 Resume file: None
