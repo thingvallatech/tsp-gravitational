@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import CityCanvas from '../components/CityCanvas';
+import Heatmap2D from '../visualization/Heatmap2D';
 import { useStore } from '../store';
 import { PresetName } from '../lib/types';
 
@@ -72,6 +73,9 @@ export default function Home() {
 
       <h2 className="text-xl font-semibold mt-6 mb-3">3D Gravitational Surface</h2>
       <HeightFieldScene />
+
+      <h2 className="text-xl font-semibold mt-6 mb-3">2D Heatmap</h2>
+      <Heatmap2D />
 
       <CityCanvas />
 
