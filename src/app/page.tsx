@@ -1,9 +1,22 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import CityCanvas from '../components/CityCanvas';
 import { useStore } from '../store';
 import { PresetName } from '../lib/types';
+
+const HeightFieldScene = dynamic(
+  () => import('../visualization/HeightFieldScene'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-[500px] flex items-center justify-center bg-gray-800 rounded">
+        <span className="text-gray-400">Loading 3D scene...</span>
+      </div>
+    ),
+  },
+);
 
 const PRESETS: PresetName[] = ['random', 'clustered', 'circular', 'grid', 'star', 'spiral'];
 
@@ -56,6 +69,9 @@ export default function Home() {
           Generate
         </button>
       </div>
+
+      <h2 className="text-xl font-semibold mt-6 mb-3">3D Gravitational Surface</h2>
+      <HeightFieldScene />
 
       <CityCanvas />
 
