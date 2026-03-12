@@ -27,11 +27,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can enter a seed value and get the same city layout every time for that seed
   3. Gravitational surface is computed from city positions with isolation-weighted wells (outlier cities produce deeper wells)
   4. Zustand store holds city data and surface data, ready for consumption by renderers
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: Project scaffolding and data types
-- [ ] 01-02: City generation, presets, and surface computation
+- [ ] 01-01-PLAN.md — Project scaffolding, core types, PRNG, and math utilities
+- [ ] 01-02-PLAN.md — City preset generators, surface computation, and Zustand store
 
 ### Phase 2: Visualization + Algorithms
 **Goal**: Users can see the gravitational surface in 3D and 2D, run TSP algorithms including the novel gravitational heuristic, and watch animated step-by-step tour construction
