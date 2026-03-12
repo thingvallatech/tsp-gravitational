@@ -57,28 +57,28 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VIZ-01 | — | Pending |
-| VIZ-02 | — | Pending |
-| VIZ-03 | — | Pending |
-| VIZ-04 | — | Pending |
-| VIZ-05 | — | Pending |
-| ALGO-01 | — | Pending |
-| ALGO-02 | — | Pending |
-| ALGO-03 | — | Pending |
-| ALGO-04 | — | Pending |
-| COMP-01 | — | Pending |
-| COMP-02 | — | Pending |
-| COMP-03 | — | Pending |
-| COMP-04 | — | Pending |
-| COMP-05 | — | Pending |
-| INPT-01 | — | Pending |
-| INPT-02 | — | Pending |
+| VIZ-01 | Phase 2 | Pending |
+| VIZ-02 | Phase 2 | Pending |
+| VIZ-03 | Phase 2 | Pending |
+| VIZ-04 | Phase 2 | Pending |
+| VIZ-05 | Phase 2 | Pending |
+| ALGO-01 | Phase 2 | Pending |
+| ALGO-02 | Phase 2 | Pending |
+| ALGO-03 | Phase 1 | Pending |
+| ALGO-04 | Phase 3 | Pending |
+| COMP-01 | Phase 3 | Pending |
+| COMP-02 | Phase 3 | Pending |
+| COMP-03 | Phase 3 | Pending |
+| COMP-04 | Phase 3 | Pending |
+| COMP-05 | Phase 3 | Pending |
+| INPT-01 | Phase 1 | Pending |
+| INPT-02 | Phase 1 | Pending |
 
 **Coverage:**
 - v1 requirements: 16 total
-- Mapped to phases: 0
-- Unmapped: 16 ⚠️
+- Mapped to phases: 16
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-12*
-*Last updated: 2026-03-12 after initial definition*
+*Last updated: 2026-03-12 after roadmap creation*
