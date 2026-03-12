@@ -13,7 +13,7 @@ This roadmap delivers a client-side TSP visualization tool in three phases: firs
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Foundation + Surface** - Data layer, city generation, gravitational surface computation
-- [ ] **Phase 2: Visualization + Algorithms** - 3D/2D rendering, algorithm engine, animation
+- [x] **Phase 2: Visualization + Algorithms** - 3D/2D rendering, algorithm engine, animation
 - [ ] **Phase 3: Gallery + Comparison** - Side-by-side comparison, stats, batch runs
 
 ## Phase Details
@@ -46,9 +46,9 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — 3D height field rendering and 2D heatmap with contour overlay
-- [ ] 02-02-PLAN.md — Algorithm engine: types, 10 TSP algorithms, registry, runner, Zustand slice
-- [ ] 02-03-PLAN.md — Animation playback, tour overlays, step narration, and page wiring
+- [x] 02-01-PLAN.md — 3D height field rendering and 2D heatmap with contour overlay
+- [x] 02-02-PLAN.md — Algorithm engine: types, 10 TSP algorithms, registry, runner, Zustand slice
+- [x] 02-03-PLAN.md — Animation playback, tour overlays, step narration, and page wiring
 
 ### Phase 3: Gallery + Comparison
 **Goal**: Users can compare all algorithms side-by-side with live stats and run batch comparisons across multiple random instances
@@ -74,5 +74,5 @@ Phases execute in numeric order: 1 → 2 → 3
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation + Surface | 2/2 | ✓ Complete | 2026-03-12 |
-| 2. Visualization + Algorithms | 0/3 | Not started | - |
+| 2. Visualization + Algorithms | 3/3 | ✓ Complete | 2026-03-12 |
 | 3. Gallery + Comparison | 0/2 | Not started | - |
