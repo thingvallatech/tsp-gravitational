@@ -1,0 +1,10 @@
+name: tsp-gravitational
+static_sites:
+  - name: tsp-gravitational
+    github:
+      repo: thingvallatech/tsp-gravitational
+      branch: main
+      deploy_on_push: true
+    build_command: npm run build
+    output_dir: out
+    environment_slug: node-js
