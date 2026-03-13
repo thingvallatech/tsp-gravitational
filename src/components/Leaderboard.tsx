@@ -12,7 +12,7 @@ export default function Leaderboard() {
 
   if (entries.length === 0) {
     return (
-      <div className="text-sm text-gray-500 text-center py-4">
+      <div className="text-sm text-slate-500 text-center py-6">
         Run algorithms to see rankings
       </div>
     );
@@ -22,14 +22,14 @@ export default function Leaderboard() {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-sm">
         <thead>
-          <tr className="text-left text-gray-400 border-b border-gray-700">
-            <th className="py-2 px-2 w-10">#</th>
+          <tr className="text-left text-slate-400 text-xs uppercase tracking-wider">
+            <th className="py-2 px-2 w-8">#</th>
             <th className="py-2 px-2">Algorithm</th>
-            <th className="py-2 px-2 text-right">Tour Length</th>
-            <th className="py-2 px-2 text-right">Time (ms)</th>
-            <th className="py-2 px-2 text-right">Gap (%)</th>
+            <th className="py-2 px-2 text-right">Tour</th>
+            <th className="py-2 px-2 text-right">Time</th>
+            <th className="py-2 px-2 text-right">Gap</th>
           </tr>
         </thead>
         <tbody>
@@ -43,24 +43,36 @@ export default function Leaderboard() {
             return (
               <tr
                 key={result.algoId}
-                className={`border-b border-gray-800 ${
-                  isFirst ? 'bg-yellow-900/20' : index % 2 === 1 ? 'bg-gray-800/30' : ''
+                className={`border-t border-slate-700/50 ${
+                  isFirst ? 'bg-amber-500/5' : ''
                 }`}
               >
-                <td className="py-1.5 px-2 text-gray-500">{index + 1}</td>
-                <td className="py-1.5 px-2">
-                  <span className="flex items-center gap-2">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full inline-block flex-shrink-0"
-                      style={{ backgroundColor: color }}
-                    />
-                    {name}
+                <td className="py-2 px-2">
+                  <span className={`text-xs font-medium ${isFirst ? 'text-amber-400' : 'text-slate-500'}`}>
+                    {index + 1}
                   </span>
                 </td>
-                <td className="py-1.5 px-2 text-right font-mono">{result.tourLength.toFixed(4)}</td>
-                <td className="py-1.5 px-2 text-right font-mono">{result.computeTimeMs.toFixed(1)}</td>
-                <td className="py-1.5 px-2 text-right font-mono">
-                  {isFirst ? '--' : `+${gap}`}
+                <td className="py-2 px-2">
+                  <span className="flex items-center gap-2">
+                    <span
+                      className="w-2 h-2 rounded-full flex-shrink-0"
+                      style={{ backgroundColor: color }}
+                    />
+                    <span className="text-slate-200">{name}</span>
+                  </span>
+                </td>
+                <td className="py-2 px-2 text-right font-mono text-slate-300 text-xs">
+                  {result.tourLength.toFixed(3)}
+                </td>
+                <td className="py-2 px-2 text-right font-mono text-slate-400 text-xs">
+                  {result.computeTimeMs.toFixed(1)}ms
+                </td>
+                <td className="py-2 px-2 text-right font-mono text-xs">
+                  {isFirst ? (
+                    <span className="text-emerald-400">best</span>
+                  ) : (
+                    <span className="text-slate-400">+{gap}%</span>
+                  )}
                 </td>
               </tr>
             );

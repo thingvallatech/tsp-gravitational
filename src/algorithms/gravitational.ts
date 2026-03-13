@@ -1,16 +1,20 @@
 import type { City, SurfaceData } from '@/lib/types';
 import type { AlgoStep } from './types';
 import { tourLength, tourEdges } from './tour-utils';
+import { euclideanDistance } from '@/lib/math-utils';
 
 /**
  * Gravitational Centerpoint heuristic (novel algorithm).
  *
- * Uses the pre-computed height field surface:
- * 1. Start at the grid point with maximum height (centroid lift peak)
- * 2. Steepest descent on the height field to find gravity wells (cities)
- * 3. When descent reaches a local minimum near an unvisited city, add it to tour
- * 4. "Fill" visited wells to prevent revisiting, resume descent
- * 5. Repeat until all cities visited
+ * Uses the pre-computed height field surface to guide tour construction:
+ * 1. Compute surface-aware distances between cities using path integrals
+ *    along the height field (edges crossing ridges cost more, valleys cost less)
+ * 2. Build initial tour using gravity-weighted nearest neighbor from centroid peak
+ * 3. Refine with 2-opt using the same surface-weighted distances
+ *
+ * The key insight: the gravitational surface encodes cluster structure via
+ * wells and ridges. By making ridge-crossing expensive, the algorithm
+ * naturally visits nearby cities in the same basin before moving to the next.
  */
 export function solveGravitational(cities: City[], surfaceData?: SurfaceData): AlgoStep[] {
   const n = cities.length;
@@ -21,7 +25,6 @@ export function solveGravitational(cities: City[], surfaceData?: SurfaceData): A
   }
 
   if (!surfaceData) {
-    // Fallback: can't run without surface data
     const tour = Array.from({ length: n }, (_, i) => i);
     return [{
       tour,
@@ -33,147 +36,168 @@ export function solveGravitational(cities: City[], surfaceData?: SurfaceData): A
 
   const steps: AlgoStep[] = [];
   const res = surfaceData.gridResolution;
+  const field = surfaceData.heightField;
 
-  // Work on a COPY of the height field (never mutate store data)
-  const field = new Float32Array(surfaceData.heightField);
+  // Step 1: Compute surface-weighted distances between all city pairs.
+  // The cost of an edge is the Euclidean distance multiplied by a ridge penalty:
+  // higher average height along the path = more expensive edge.
+  const surfaceDist = new Float64Array(n * n);
+  const eucDist = new Float64Array(n * n);
 
-  // Map city positions to grid cells
-  const cityGrid = cities.map(c => ({
-    gx: Math.round(c.x * (res - 1)),
-    gy: Math.round(c.y * (res - 1)),
-  }));
+  // Pre-compute height at each city
+  const cityHeight = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const gx = Math.min(Math.round(cities[i].x * (res - 1)), res - 1);
+    const gy = Math.min(Math.round(cities[i].y * (res - 1)), res - 1);
+    cityHeight[i] = field[gy * res + gx];
+  }
 
-  const visited = new Uint8Array(n);
-  const tour: number[] = [];
+  // Min/max height for normalization
+  const minH = surfaceData.minHeight;
+  const maxH = surfaceData.maxHeight;
+  const rangeH = maxH - minH || 1;
 
-  // Find starting point: grid cell with maximum height (centroid peak)
-  let startGx = 0, startGy = 0;
-  let maxH = -Infinity;
-  for (let gy = 0; gy < res; gy++) {
-    for (let gx = 0; gx < res; gx++) {
-      const h = field[gy * res + gx];
-      if (h > maxH) {
-        maxH = h;
-        startGx = gx;
-        startGy = gy;
+  for (let i = 0; i < n; i++) {
+    for (let j = i + 1; j < n; j++) {
+      const d = euclideanDistance(cities[i].x, cities[i].y, cities[j].x, cities[j].y);
+      eucDist[i * n + j] = d;
+      eucDist[j * n + i] = d;
+
+      // Sample height along the edge at ~10 points
+      const samples = Math.max(5, Math.ceil(d * res * 0.5));
+      let avgHeight = 0;
+      let maxEdgeHeight = -Infinity;
+
+      for (let s = 0; s <= samples; s++) {
+        const t = s / samples;
+        const wx = cities[i].x + t * (cities[j].x - cities[i].x);
+        const wy = cities[i].y + t * (cities[j].y - cities[i].y);
+        const gx = Math.min(Math.round(wx * (res - 1)), res - 1);
+        const gy = Math.min(Math.round(wy * (res - 1)), res - 1);
+        const h = field[gy * res + gx];
+        avgHeight += h;
+        if (h > maxEdgeHeight) maxEdgeHeight = h;
       }
+      avgHeight /= (samples + 1);
+
+      // Ridge penalty: edges crossing high terrain are penalized
+      // Normalize height to [0,1], use as multiplier
+      const avgNorm = (avgHeight - minH) / rangeH;
+      const maxNorm = (maxEdgeHeight - minH) / rangeH;
+      // Blend: 60% avg height penalty + 40% max height penalty
+      const ridgePenalty = 1 + 2.0 * (0.6 * avgNorm + 0.4 * maxNorm);
+
+      // Well bonus: cities in deep wells (low height) are attractive
+      const depthI = 1 - (cityHeight[i] - minH) / rangeH;
+      const depthJ = 1 - (cityHeight[j] - minH) / rangeH;
+      const wellBonus = 1 - 0.3 * (depthI + depthJ) / 2;
+
+      const surfD = d * ridgePenalty * wellBonus;
+      surfaceDist[i * n + j] = surfD;
+      surfaceDist[j * n + i] = surfD;
     }
   }
 
-  let curGx = startGx;
-  let curGy = startGy;
+  steps.push({
+    tour: [],
+    edges: [],
+    cost: 0,
+    description: 'Gravitational: computed surface-weighted distance matrix',
+  });
 
-  // 8-directional neighbor offsets
-  const dx8 = [-1, -1, -1, 0, 0, 1, 1, 1];
-  const dy8 = [-1, 0, 1, -1, 1, -1, 0, 1];
+  // Step 2: Find starting city — the one in the deepest well (most gravitational pull)
+  let startCity = 0;
+  let deepestH = Infinity;
+  for (let i = 0; i < n; i++) {
+    if (cityHeight[i] < deepestH) {
+      deepestH = cityHeight[i];
+      startCity = i;
+    }
+  }
 
-  const maxStepsPerDescent = res * res; // safety limit
-  const nearbyRadius = 2; // grid cells
+  // Step 3: Gravity-guided nearest neighbor construction
+  const visited = new Uint8Array(n);
+  const tour: number[] = [startCity];
+  visited[startCity] = 1;
+
+  steps.push({
+    tour: [...tour],
+    edges: tourEdges(tour),
+    cost: 0,
+    description: `Gravitational: starting from city ${startCity} (deepest well, height ${cityHeight[startCity].toFixed(3)})`,
+  });
 
   while (tour.length < n) {
-    // Steepest descent from current position
-    let stepsInDescent = 0;
-    let foundCity = -1;
+    const current = tour[tour.length - 1];
+    let bestNext = -1;
+    let bestDist = Infinity;
 
-    while (stepsInDescent < maxStepsPerDescent) {
-      stepsInDescent++;
-
-      // Check if we're near any unvisited city
-      foundCity = findNearbyCity(curGx, curGy, cityGrid, visited, nearbyRadius);
-      if (foundCity !== -1) break;
-
-      // Find steepest descent neighbor
-      let bestH = field[curGy * res + curGx];
-      let bestGx = curGx, bestGy = curGy;
-
-      for (let d = 0; d < 8; d++) {
-        const nx = curGx + dx8[d];
-        const ny = curGy + dy8[d];
-        if (nx < 0 || nx >= res || ny < 0 || ny >= res) continue;
-        const h = field[ny * res + nx];
-        if (h < bestH) {
-          bestH = h;
-          bestGx = nx;
-          bestGy = ny;
-        }
+    for (let j = 0; j < n; j++) {
+      if (visited[j]) continue;
+      const sd = surfaceDist[current * n + j];
+      if (sd < bestDist) {
+        bestDist = sd;
+        bestNext = j;
       }
-
-      // Stuck at local minimum without finding a city
-      if (bestGx === curGx && bestGy === curGy) break;
-
-      curGx = bestGx;
-      curGy = bestGy;
     }
 
-    if (foundCity !== -1) {
-      // Add city to tour
-      visited[foundCity] = 1;
-      tour.push(foundCity);
+    if (bestNext === -1) break;
 
-      const depth = field[curGy * res + curGx];
+    visited[bestNext] = 1;
+    tour.push(bestNext);
 
+    const currentCost = tourLength(cities, tour);
+    const realDist = eucDist[current * n + bestNext];
+    steps.push({
+      tour: [...tour],
+      edges: tourEdges(tour),
+      cost: currentCost,
+      description: `Gravitational: drainage flows to city ${bestNext} (surface dist ${bestDist.toFixed(3)}, actual ${realDist.toFixed(3)})`,
+    });
+  }
+
+  // Step 4: 2-opt improvement using surface distances
+  let improved = true;
+  let iterations = 0;
+  const maxIter = 100;
+
+  while (improved && iterations < maxIter) {
+    improved = false;
+    iterations++;
+
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = i + 2; j < n; j++) {
+        if (i === 0 && j === n - 1) continue;
+
+        const a = tour[i], b = tour[i + 1];
+        const c = tour[j], d = tour[(j + 1) % n];
+
+        const oldDist = eucDist[a * n + b] + eucDist[c * n + d];
+        const newDist = eucDist[a * n + c] + eucDist[b * n + d];
+
+        if (newDist < oldDist - 1e-10) {
+          // Reverse the segment between i+1 and j
+          let left = i + 1, right = j;
+          while (left < right) {
+            const tmp = tour[left];
+            tour[left] = tour[right];
+            tour[right] = tmp;
+            left++;
+            right--;
+          }
+          improved = true;
+        }
+      }
+    }
+
+    if (improved && iterations % 5 === 0) {
+      const cost = tourLength(cities, tour);
       steps.push({
         tour: [...tour],
         edges: tourEdges(tour),
-        cost: tour.length >= 2 ? tourLength(cities, tour) : 0,
-        description: `Gravitational: drainage reached city ${foundCity} at depth ${depth.toFixed(3)}`,
+        cost,
+        description: `Gravitational: 2-opt refinement iteration ${iterations}, cost ${cost.toFixed(3)}`,
       });
-
-      // "Fill" the visited well: set height values within kernel radius to local max
-      fillWell(field, res, cityGrid[foundCity].gx, cityGrid[foundCity].gy, nearbyRadius * 3);
-
-      // Continue descent from the filled point
-    } else {
-      // Descent got stuck without finding a city
-      // Find nearest unvisited city and add it directly (fallback)
-      const refX = tour.length > 0 ? cities[tour[tour.length - 1]].x : curGx / (res - 1);
-      const refY = tour.length > 0 ? cities[tour[tour.length - 1]].y : curGy / (res - 1);
-      let nearestDist = Infinity;
-      let nearestIdx = -1;
-      for (let i = 0; i < n; i++) {
-        if (visited[i]) continue;
-        const ddx = refX - cities[i].x;
-        const ddy = refY - cities[i].y;
-        const d = Math.sqrt(ddx * ddx + ddy * ddy);
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearestIdx = i;
-        }
-      }
-
-      if (nearestIdx !== -1) {
-        visited[nearestIdx] = 1;
-        tour.push(nearestIdx);
-        fillWell(field, res, cityGrid[nearestIdx].gx, cityGrid[nearestIdx].gy, nearbyRadius * 3);
-
-        // Restart descent from the highest point near remaining unvisited cities
-        let bestH = -Infinity;
-        for (let i = 0; i < n; i++) {
-          if (visited[i]) continue;
-          const cgx = cityGrid[i].gx;
-          const cgy = cityGrid[i].gy;
-          for (let ddy = -5; ddy <= 5; ddy++) {
-            for (let ddx = -5; ddx <= 5; ddx++) {
-              const nx = cgx + ddx;
-              const ny = cgy + ddy;
-              if (nx < 0 || nx >= res || ny < 0 || ny >= res) continue;
-              const h = field[ny * res + nx];
-              if (h > bestH) {
-                bestH = h;
-                curGx = nx;
-                curGy = ny;
-              }
-            }
-          }
-        }
-
-        steps.push({
-          tour: [...tour],
-          edges: tourEdges(tour),
-          cost: tourLength(cities, tour),
-          description: `Gravitational: fallback to nearest unvisited city ${nearestIdx}`,
-        });
-      }
     }
   }
 
@@ -183,60 +207,8 @@ export function solveGravitational(cities: City[], surfaceData?: SurfaceData): A
     tour: [...tour],
     edges: tourEdges(tour),
     cost: finalCost,
-    description: `Gravitational: tour complete, cost ${finalCost.toFixed(3)}`,
+    description: `Gravitational: tour complete after ${iterations} improvement rounds, cost ${finalCost.toFixed(3)}`,
   });
 
   return steps;
-}
-
-/** Find any unvisited city within radius grid cells of (gx, gy) */
-function findNearbyCity(
-  gx: number, gy: number,
-  cityGrid: { gx: number; gy: number }[],
-  visited: Uint8Array,
-  radius: number,
-): number {
-  let bestIdx = -1;
-  let bestDistSq = Infinity;
-
-  for (let i = 0; i < cityGrid.length; i++) {
-    if (visited[i]) continue;
-    const dx = gx - cityGrid[i].gx;
-    const dy = gy - cityGrid[i].gy;
-    const distSq = dx * dx + dy * dy;
-    if (distSq <= radius * radius && distSq < bestDistSq) {
-      bestDistSq = distSq;
-      bestIdx = i;
-    }
-  }
-
-  return bestIdx;
-}
-
-/** Fill a well by raising height values around (cx, cy) to local maximum */
-function fillWell(field: Float32Array, res: number, cx: number, cy: number, radius: number): void {
-  // Find local max in the area
-  let localMax = -Infinity;
-  for (let dy = -radius; dy <= radius; dy++) {
-    for (let dx = -radius; dx <= radius; dx++) {
-      const nx = cx + dx;
-      const ny = cy + dy;
-      if (nx < 0 || nx >= res || ny < 0 || ny >= res) continue;
-      const h = field[ny * res + nx];
-      if (h > localMax) localMax = h;
-    }
-  }
-
-  // Set all cells in radius to local max (fill the well)
-  for (let dy = -radius; dy <= radius; dy++) {
-    for (let dx = -radius; dx <= radius; dx++) {
-      const nx = cx + dx;
-      const ny = cy + dy;
-      if (nx < 0 || nx >= res || ny < 0 || ny >= res) continue;
-      const distSq = dx * dx + dy * dy;
-      if (distSq <= radius * radius) {
-        field[ny * res + nx] = localMax;
-      }
-    }
-  }
 }

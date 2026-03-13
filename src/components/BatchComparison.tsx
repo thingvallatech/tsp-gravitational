@@ -87,13 +87,19 @@ export default function BatchComparison() {
       let bestAlgoId = '';
 
       for (const algo of algos) {
-        const result = runAlgorithm(algo.id, cities, surfaceData);
-        tourLengths[algo.id].push(result.tourLength);
-        computeTimes[algo.id].push(result.computeTimeMs);
+        try {
+          const result = runAlgorithm(algo.id, cities, surfaceData);
+          tourLengths[algo.id].push(result.tourLength);
+          computeTimes[algo.id].push(result.computeTimeMs);
 
-        if (result.tourLength < bestLength) {
-          bestLength = result.tourLength;
-          bestAlgoId = algo.id;
+          if (result.tourLength < bestLength) {
+            bestLength = result.tourLength;
+            bestAlgoId = algo.id;
+          }
+        } catch (err) {
+          console.error(`Batch: algorithm ${algo.id} failed on seed ${currentSeed}:`, err);
+          tourLengths[algo.id].push(Infinity);
+          computeTimes[algo.id].push(0);
         }
       }
 
